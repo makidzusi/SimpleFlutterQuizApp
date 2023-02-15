@@ -23,10 +23,16 @@ class _MyAppState extends State<MyApp> {
   }
 
   int _questionIndex = 0;
-  List<String> questions = [
-    "Твой любимый цвет?",
-    "Лучшее время года?",
-    "Ты кто]?"
+
+  var questions = [
+    {
+      'questionText': "Какой твой любимый цвет?",
+      'answers': ['Красный', 'Черный', 'Зеленый']
+    },
+    {
+      'questionText': "Какой твой любимый фрэймворк?",
+      'answers': ['asp.net', 'flutter', 'vue']
+    }
   ];
 
   @override
@@ -40,12 +46,12 @@ class _MyAppState extends State<MyApp> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Question(
-            questionText: questions[_questionIndex],
+            questionText: questions[_questionIndex]['questionText'] as String,
           ),
-          Answer(
-            answerText: "answer",
-            onAnswer: _onBtnPressed,
-          )
+          ...(questions[_questionIndex]['answers'] as List<String>)
+              .map((answer) {
+            return Answer(answerText: answer, onAnswer: _onBtnPressed);
+          }).toList()
         ],
       ),
     ));
