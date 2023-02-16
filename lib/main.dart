@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:quiz_app/answer.dart';
-import 'package:quiz_app/question.dart';
+import 'package:quiz_app/quiz.dart';
+import 'package:quiz_app/result.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,25 +14,34 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  void _onBtnPressed() {
+  void _onBtnPressed(int score) {
+    _totalScore = _totalScore + score;
     setState(() {
-      if (_questionIndex < questions.length - 1) {
+      if (_questionIndex <= _questions.length - 1) {
         _questionIndex = _questionIndex + 1;
       }
     });
   }
 
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
+  }
+
+  int _totalScore = 0;
   int _questionIndex = 0;
 
-  var questions = [
+  final _questions = const [
     {
       'questionText': "Какой твой любимый цвет?",
-      'answers': ['Красный', 'Черный', 'Зеленый']
+      'answers': [
+        {'text': 'Красный', 'score': 10},
+        {'text': 'Черный', 'score': 5},
+        {'text': 'Зеленый', 'score': 1}
+      ]
     },
-    {
-      'questionText': "Какой твой любимый фрэймворк?",
-      'answers': ['asp.net', 'flutter', 'vue']
-    }
   ];
 
   @override
@@ -42,18 +51,15 @@ class _MyAppState extends State<MyApp> {
       appBar: AppBar(
         title: const Text("QuizApp"),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Question(
-            questionText: questions[_questionIndex]['questionText'] as String,
-          ),
-          ...(questions[_questionIndex]['answers'] as List<String>)
-              .map((answer) {
-            return Answer(answerText: answer, onAnswer: _onBtnPressed);
-          }).toList()
-        ],
-      ),
+      body: _questionIndex < _questions.length
+          ? Quiz(
+              questions: _questions,
+              answerQuestion: _onBtnPressed,
+              questionIndex: _questionIndex)
+          : Result(
+              resultScore: _totalScore,
+              onReset: _resetQuiz,
+            ),
     ));
   }
 }
